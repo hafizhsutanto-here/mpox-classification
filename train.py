@@ -20,7 +20,6 @@ from Models.CNN import SimpleCNN
 from Models.CNN2 import SimpleCNN2
 from Models.Model3 import Model3Classifier
 
-# Ganti DEFAULT_ARCH jika ingin langsung klik Run (▶) di VS Code tanpa terminal
 # Pilihan: "cnn1", "cnn2", "mobilevit_xxs", "convnextv2_atto", "deit_tiny_patch16_224"
 DEFAULT_ARCH = "mobilevit_xxs"
 
