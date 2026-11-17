@@ -1,0 +1,32 @@
+import torch
+import torch.nn as nn
+
+class SimpleCNN2(nn.Module):
+    """
+    Arsitektur CNN dengan kernel 7x7.
+    Input gambar berukuran 100x100 piksel.
+    Alur: Conv -> Pooling -> Conv -> Pooling -> Flatten -> Linear -> LogSoftmax
+    """
+
+    def __init__(self, input_c=3, output=6):
+        super(SimpleCNN2, self).__init__()
+
+        self.convBlock1 = nn.Sequential(
+            nn.Conv2d(in_channels=input_c, out_channels=50, kernel_size=(7, 7)),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=(3, 3)),
+        )
+        self.convBlock2 = nn.Sequential(
+            nn.Conv2d(in_channels=50, out_channels=60, kernel_size=(7, 7)),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=(3, 3)),
+        )
+        self.fc = nn.Linear(in_features=60 * 8 * 8, out_features=output)
+        self.logSoftmax = nn.LogSoftmax(dim=1)
+
+    def forward(self, x):
+        x = self.convBlock1(x)
+        x = self.convBlock2(x)
+        x = self.fc(torch.flatten(x, 1))
+        x = self.logSoftmax(x)
+        return x

@@ -1,0 +1,8 @@
+__pycache__/
+checkpoints/
+*.pt
+*.pth
+*.h5
+*.caffe
+*.zip
+Dataset/
