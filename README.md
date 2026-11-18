@@ -112,8 +112,9 @@ mpox-classification/
 | **Fold 4** | 0.4074 | 0.7155 | 0.7778 | 0.7871 | 0.9803 |
 | **Fold 5** | 0.4127 | 0.7176 | **0.9048** | **0.8985** | **0.9910** |
 
-### Visualisasi Confusion Matrix & Kurva Loss (Model 3)
+### Visualisasi Confusion Matrix & Kurva Loss (Model 2 & Model 3)
 
-| Confusion Matrix Gabungan (5-Fold) | Contoh Kurva Loss (Fold 5) |
-| :---: | :---: |
-| ![CM Gabungan Model 3](results/mobilevit_xxs_clahe_224/cm_gabungan.png) | ![Loss Fold 5 Model 3](results/mobilevit_xxs_clahe_224/fold5_training.png) |
+| Model | Confusion Matrix Gabungan (5-Fold) | Contoh Kurva Loss (Fold 5) |
+| :--- | :---: | :---: |
+| **Model 2 (`SimpleCNN2`)** | ![CM Gabungan Model 2](results/cnn2_rgb_100/cm_gabungan.png) | ![Loss Fold 5 Model 2](results/cnn2_rgb_100/fold5_training.png) |
+| **Model 3 (`MobileViT-XXS`)** | ![CM Gabungan Model 3](results/mobilevit_xxs_clahe_224/cm_gabungan.png) | ![Loss Fold 5 Model 3](results/mobilevit_xxs_clahe_224/fold5_training.png) |
