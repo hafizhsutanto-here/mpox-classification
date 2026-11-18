@@ -43,8 +43,9 @@ cd mpox-classification
 pip install -r requirements.txt
 ```
 
-2. Cek & unduh dataset otomatis via `kagglehub`:
+2. Cek spesifikasi GPU/CUDA & verifikasi unduhan dataset otomatis via `kagglehub`:
 ```bash
+python cek_spesifikasi.py
 python cek_data.py
 ```
 
@@ -80,6 +81,7 @@ mpox-classification/
 │   ├── mobilevit_xxs_clahe_224/ # Hasil 5-fold Model 3
 │   └── summary/               # Grafik perbandingan untuk laporan & PPT
 ├── cek_data.py                # Verifikasi unduhan & jumlah data Fold 1
+├── cek_spesifikasi.py         # Verifikasi PyTorch, GPU CUDA, dan library
 ├── train.py                   # Pipeline training 5-fold
 ├── test.py                    # Pipeline evaluasi 5-fold + ekspor ZIP
 ├── requirements.txt
