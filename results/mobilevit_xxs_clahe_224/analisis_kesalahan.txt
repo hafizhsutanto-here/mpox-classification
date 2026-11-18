@@ -1,19 +1,19 @@
 Recall per kelas (gabungan semua fold):
-  Chickenpox: 0.6667
-  Cowpox: 0.9143
-  HFMD: 0.9024
+  Chickenpox: 0.6429
+  Cowpox: 0.8286
+  HFMD: 0.9512
   Healthy: 0.9200
-  Measles: 0.7000
-  Monkeypox: 0.8400
+  Measles: 0.8000
+  Monkeypox: 0.6800
 
 Kesalahan klasifikasi terbanyak (jumlah, kelas asli -> diprediksi sebagai):
-  13x  Chickenpox -> Monkeypox
+  12x  Monkeypox -> HFMD
+  10x  Monkeypox -> Healthy
   9x  Monkeypox -> Chickenpox
-  5x  Monkeypox -> Healthy
-  5x  Monkeypox -> Cowpox
-  5x  Measles -> HFMD
-  3x  HFMD -> Chickenpox
-  3x  Cowpox -> HFMD
-  2x  Measles -> Monkeypox
-  2x  Measles -> Healthy
-  2x  Healthy -> Monkeypox
+  9x  Chickenpox -> Monkeypox
+  6x  Monkeypox -> Cowpox
+  4x  Healthy -> HFMD
+  4x  Chickenpox -> Cowpox
+  3x  Monkeypox -> Measles
+  3x  Measles -> HFMD
+  3x  Cowpox -> Monkeypox

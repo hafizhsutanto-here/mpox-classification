@@ -6,6 +6,8 @@ import argparse
 import numpy as np
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
+import torchvision.transforms as T
 import matplotlib
 matplotlib.use("Agg")
 from torch.utils.data import Dataset, DataLoader
@@ -25,6 +27,22 @@ DEFAULT_ARCH = "mobilevit_xxs"
 
 IMAGENET_MEAN = torch.tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1)
 IMAGENET_STD = torch.tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1)
+
+AUG_TF = T.Compose([
+    T.RandomHorizontalFlip(p=0.5),
+    T.RandomVerticalFlip(p=0.3),
+    T.RandomAffine(degrees=15, translate=(0.05, 0.05), scale=(0.9, 1.1)),
+    T.ColorJitter(brightness=0.1, contrast=0.1),
+])
+
+
+def mixup_batch(x, y, num_classes=6, alpha=0.2):
+    lam = np.random.beta(alpha, alpha) if alpha > 0 else 1.0
+    idx = torch.randperm(x.size(0), device=x.device)
+    mixed_x = lam * x + (1 - lam) * x[idx]
+    y_onehot = F.one_hot(y, num_classes).float()
+    mixed_y = lam * y_onehot + (1 - lam) * y_onehot[idx]
+    return mixed_x, mixed_y
 
 
 class DatasetCache(Dataset):
@@ -84,7 +102,7 @@ def main():
         elif args.arch == "cnn2":
             args.epoch = 20
         else:
-            args.epoch = 8
+            args.epoch = 10
     if args.lr is None:
         args.lr = 1e-3 if is_cnn else 1e-4
 
@@ -136,10 +154,14 @@ def main():
             tloss = 0.0
             for src, trg in tqdm(train_loader, desc=f"Epoch {ep+1}/{args.epoch}", leave=False):
                 src, trg = src.to(device), trg.to(device)
-                if not is_cnn:
-                    src = (src - mean_t) / std_t
                 optimizer.zero_grad()
-                loss = criterion(model(src), trg)
+                if not is_cnn:
+                    src = (AUG_TF(src) - mean_t) / std_t
+                    mx, my = mixup_batch(src, trg, len(CLASSES), alpha=0.2)
+                    log_p = F.log_softmax(model(mx), dim=1)
+                    loss = -(my * weights.unsqueeze(0) * log_p).sum(dim=1).mean()
+                else:
+                    loss = criterion(model(src), trg)
                 loss.backward()
                 optimizer.step()
                 tloss += loss.item()
