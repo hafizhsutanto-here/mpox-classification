@@ -28,7 +28,7 @@ Penelitian ini menggunakan [**Mpox Skin Lesion Dataset Version 2.0 (MSLD v2.0)**
 
 | Model | File | Arsitektur & Preprocessing | Optimizer & Epoch |
 | :--- | :--- | :--- | :--- |
-| **Model 1 (`cnn1`)** | `Models/CNN.py` | `SimpleCNN`: 2 blok `Conv(5×5) + ReLU + MaxPool(3×3)` → `Linear`, input `100×100` (`RGB`) | `Adam` (`lr=1e-3`), `NLLLoss`, 20/100 ep |
+| **Model 1 (`cnn1`)** | `Models/CNN.py` | `SimpleCNN`: 2 blok `Conv(5×5) + ReLU + MaxPool(3×3)` → `Linear`, input `100×100` (`RGB`) | `Adam` (`lr=1e-3`), `NLLLoss`, 100 ep |
 | **Model 2 (`cnn2`)** | `Models/CNN2.py` | `SimpleCNN2`: 2 blok `Conv(7×7) + ReLU + MaxPool(3×3)` → `Linear`, input `100×100` (`RGB`) | `Adam` (`lr=1e-3`), `NLLLoss`, 20 ep |
 | **Model 3 (`mobilevit_xxs`)** | `Models/Model3.py` | `MobileViT-XXS` *pretrained* (Hybrid CNN + Transformer) + `CLAHE (LAB)` + *Aug on-the-fly + Dropout (0.2/0.1) + Mixup*, input `224×224` | `AdamW` (`lr=1e-4`), `CosineAnnealingLR`, 10 ep, `Flip TTA` |
 
@@ -77,8 +77,9 @@ mpox-classification/
 │   ├── getData.py             # Dataset loader 6 kelas, 5-fold, RGB/Gray/CLAHE/Mask
 │   └── metrics.py             # Perhitungan metrik & visualisasi grafik
 ├── results/
-│   ├── cnn2_rgb_100/          # Hasil 5-fold Model 2
-│   ├── mobilevit_xxs_clahe_224/ # Hasil 5-fold Model 3
+│   ├── cnn1_rgb_100/          # Hasil 5-fold Model 1 (100 epoch)
+│   ├── cnn2_rgb_100/          # Hasil 5-fold Model 2 (20 epoch)
+│   ├── mobilevit_xxs_clahe_224/ # Hasil 5-fold Model 3 (10 epoch)
 │   └── summary/               # Grafik perbandingan untuk laporan & PPT
 ├── cek_data.py                # Verifikasi unduhan & jumlah data Fold 1
 ├── cek_spesifikasi.py         # Verifikasi PyTorch, GPU CUDA, dan library
@@ -96,7 +97,7 @@ mpox-classification/
 
 | Model | Accuracy | Precision | Recall | F1-Score | ROC-AUC |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| **Model 1 (`SimpleCNN`)** | `0.3668 ± 0.0356` | `0.3694 ± 0.0586` | `0.3826 ± 0.0589` | `0.3373 ± 0.0326` | `0.7255 ± 0.0163` |
+| **Model 1 (`SimpleCNN`)** | `0.3876 ± 0.0727` | `0.3741 ± 0.0391` | `0.4033 ± 0.0182` | `0.3501 ± 0.0341` | `0.7316 ± 0.0185` |
 | **Model 2 (`SimpleCNN2`)** | `0.3611 ± 0.0791` | `0.3226 ± 0.0648` | `0.3818 ± 0.0526` | `0.3175 ± 0.0688` | `0.6949 ± 0.0319` |
 | **Model 3 (`MobileViT-XXS + CLAHE`)** | **`0.7999 ± 0.0711`** | **`0.8028 ± 0.0983`** | **`0.8175 ± 0.0426`** | **`0.7954 ± 0.0762`** | **`0.9643 ± 0.0201`** |
 
@@ -106,17 +107,18 @@ mpox-classification/
 
 ![Evaluasi Per Fold dan Recall Per Kelas](results/summary/3_per_fold_dan_recall_kelas.png)
 
-| Fold | Model 2 Accuracy | Model 2 ROC-AUC | Model 3 Accuracy | Model 3 F1-Score | Model 3 ROC-AUC |
-| :---: | :---: | :---: | :---: | :---: | :---: |
-| **Fold 1** | 0.4324 | 0.7224 | 0.7973 | 0.8013 | 0.9501 |
-| **Fold 2** | 0.2561 | 0.6540 | 0.7073 | 0.6842 | 0.9460 |
-| **Fold 3** | 0.2969 | 0.6650 | 0.8125 | 0.8059 | 0.9541 |
-| **Fold 4** | 0.4074 | 0.7155 | 0.7778 | 0.7871 | 0.9803 |
-| **Fold 5** | 0.4127 | 0.7176 | **0.9048** | **0.8985** | **0.9910** |
+| Fold | Model 1 (`SimpleCNN`) Acc \| AUC | Model 2 (`SimpleCNN2`) Acc \| AUC | Model 3 (`MobileViT-XXS`) Acc \| F1 \| ROC-AUC |
+| :---: | :---: | :---: | :---: |
+| **Fold 1** | 0.4459 \| 0.7493 | 0.4324 \| 0.7224 | 0.7973 \| 0.8013 \| 0.9501 |
+| **Fold 2** | 0.4756 \| 0.7048 | 0.2561 \| 0.6540 | 0.7073 \| 0.6842 \| 0.9460 |
+| **Fold 3** | 0.2969 \| 0.7471 | 0.2969 \| 0.6650 | 0.8125 \| 0.8059 \| 0.9541 |
+| **Fold 4** | 0.3704 \| 0.7349 | 0.4074 \| 0.7155 | 0.7778 \| 0.7871 \| 0.9803 |
+| **Fold 5** | 0.3492 \| 0.7221 | 0.4127 \| 0.7176 | **0.9048 \| 0.8985 \| 0.9910** |
 
-### Visualisasi Confusion Matrix & Kurva Loss (Model 2 & Model 3)
+### Visualisasi Confusion Matrix & Kurva Loss (Model 1, Model 2, & Model 3)
 
 | Model | Confusion Matrix Gabungan (5-Fold) | Contoh Kurva Loss (Fold 5) |
 | :--- | :---: | :---: |
+| **Model 1 (`SimpleCNN`)** | ![CM Gabungan Model 1](results/cnn1_rgb_100/cm_gabungan.png) | ![Loss Fold 5 Model 1](results/cnn1_rgb_100/fold5_training.png) |
 | **Model 2 (`SimpleCNN2`)** | ![CM Gabungan Model 2](results/cnn2_rgb_100/cm_gabungan.png) | ![Loss Fold 5 Model 2](results/cnn2_rgb_100/fold5_training.png) |
 | **Model 3 (`MobileViT-XXS`)** | ![CM Gabungan Model 3](results/mobilevit_xxs_clahe_224/cm_gabungan.png) | ![Loss Fold 5 Model 3](results/mobilevit_xxs_clahe_224/fold5_training.png) |
